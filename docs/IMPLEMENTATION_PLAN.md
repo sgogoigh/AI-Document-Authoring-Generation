@@ -89,16 +89,16 @@
 ## Phase 3 — Gemini AI Engine (Structured Text + Image Generation) & Document Builders
 
 ### Step 8: Gemini LLM Service (Outline Suggestion, Context-Aware Generation, Refinement & Image Generation)
-- [ ] Verify active Gemini text & image models via `GEMINI_API_KEY` from `.env`.
-- [ ] Implement `backend/app/schemas/llm_structured.py` (`OutlineSuggestionSchema`, `DocxSectionSchema`, `PptxSlideSchema`).
-- [ ] Implement `backend/app/services/gemini_service.py` using `google-genai`:
+- [x] Verify active Gemini text & image models via `GEMINI_API_KEY` from `.env`.
+- [x] Implement `backend/app/schemas/llm_structured.py` (`OutlineSuggestionSchema`, `DocxSectionSchema`, `PptxSlideSchema`).
+- [x] Implement `backend/app/services/gemini_service.py` using `google-genai`:
   - `suggest_outline(doc_type, main_topic, target_count)` -> **Bonus Feature** ("AI-Suggest Outline")
   - `generate_section_content(project, section, sibling_titles)` -> structured JSON specific to `.docx` vs `.pptx`
   - `refine_section_content(project, section, current_json, refinement_prompt)` -> section-scoped revision
   - `generate_section_image(image_prompt, aspect_ratio)` -> generates crisp PNG visual via Gemini image model, saves to `storage/assets/`, returns dimensions & metadata
   - Every LLM call records `llm_call_metrics` (tokens, latency, model, status) and handles retries/clean fallbacks.
-- [ ] Write & run unit tests (`tests/unit/test_gemini_service_unit.py`) AND live Gemini verification tests (`tests/live_ai/test_gemini_live.py`).
-- [ ] Commit Step 8 (`Commit #8`)
+- [x] Write & run unit tests (`tests/unit/test_gemini_service_unit.py`) AND live Gemini verification tests (`tests/live_ai/test_gemini_live.py`).
+- [x] Commit Step 8 (`Commit #8`)
 
 ### Step 9: Generation, Refinement, Feedback, Comments & Monitoring/Reconstruction APIs
 - [ ] Implement `backend/app/api/v1/generation.py`:
