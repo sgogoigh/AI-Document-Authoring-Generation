@@ -74,15 +74,15 @@
 - [x] Commit Step 6 (`Commit #6`)
 
 ### Step 7: Project Management & Document Configuration (Scaffolding) APIs
-- [ ] Implement `backend/app/services/project_service.py` and `backend/app/api/v1/projects.py`:
+- [x] Implement `backend/app/services/project_service.py` and `backend/app/api/v1/projects.py`:
   - `POST /api/v1/projects` (create `.docx` or `.pptx` project with main topic & theme config)
   - `GET /api/v1/projects` (list user's projects with search/filter/sort + section counts & feedback stats)
   - `GET /api/v1/projects/{id}` (full project detail with sections, latest revisions, feedback, comments, assets)
   - `PATCH /api/v1/projects/{id}` & `DELETE /api/v1/projects/{id}` (soft delete + audit log)
   - `PUT /api/v1/projects/{id}/outline` (add, remove, reorder `.docx` section headers OR update `.pptx` slide count & slide titles, incrementing project version & capturing snapshot)
-- [ ] Enforce strict user ownership checks on all endpoints.
-- [ ] Write & run `tests/integration/test_projects_and_outline_api.py`.
-- [ ] Commit Step 7 (`Commit #7`)
+- [x] Enforce strict user ownership checks on all endpoints.
+- [x] Write & run `tests/integration/test_projects_and_outline_api.py`.
+- [x] Commit Step 7 (`Commit #7`)
 
 ---
 
