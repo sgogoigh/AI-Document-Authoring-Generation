@@ -1,0 +1,47 @@
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+import app.models  # noqa: F401
+from app.api.v1.router import api_router
+from app.core.config import get_settings
+from app.core.database import Base, engine
+from app.core.logging_middleware import TraceAndTimingMiddleware
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    """Ensure storage paths and database metadata are ready on startup."""
+    get_settings()
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+def create_app() -> FastAPI:
+    """Create and configure the standalone FastAPI application."""
+    settings = get_settings()
+    app = FastAPI(
+        title=settings.app_name,
+        version="0.1.0",
+        openapi_url=f"{settings.api_v1_prefix}/openapi.json",
+        docs_url="/docs",
+        redoc_url="/redoc",
+        lifespan=lifespan,
+    )
+
+    app.add_middleware(TraceAndTimingMiddleware)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origin_list,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+        expose_headers=["Content-Disposition", "X-Trace-Id", "X-Response-Time-Ms"],
+    )
+
+    app.include_router(api_router, prefix=settings.api_v1_prefix)
+    return app
+
+
+app = create_app()
