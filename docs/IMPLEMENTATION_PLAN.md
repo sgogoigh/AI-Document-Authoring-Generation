@@ -237,3 +237,41 @@
 | **Export & Quality** | `python-docx` & `python-pptx` export + programmatic & visual QA | Step 10, 18 | Complete |
 | **Standalone Deploy** | Independent `backend/` & `frontend/` deps + Dockerfiles + venv | Step 3, 11, 16 | Complete |
 | **Docs & Repo** | Plans in `docs/`, comprehensive `README.md`, 1 commit/step, push/5 commits | Step 1–19 | Complete |
+
+---
+
+## Phase 6 — Comprehensive Scenario Testing (50+ Cases), DB Performance Optimization & Cloud Deployment Plan
+
+### Step 20: Append Implementation Plan & Design Scenario Test Matrix
+- [x] Append Phase 6 steps & checklists to `docs/IMPLEMENTATION_PLAN.md`.
+- [x] Commit Step 20 (`Commit #20`).
+
+### Step 21: Build Isolated 50+ Scenario Test Suite (`backend/tests/scenarios/`)
+- [ ] Create `backend/tests/scenarios/` dedicated solely to situational mocks, adversarial inputs, builder edge cases, and multi-round workflows:
+  - `test_docx_builder_scenarios.py` (20+ scenarios: all palettes, all tones, 1-section to 12-section scale, Unicode/emoji/XML-special-chars, jagged/oversized tables, missing images, multi-aspect-ratio PNGs, fallback raw text, long headings)
+  - `test_pptx_builder_scenarios.py` (18+ scenarios: all layouts `bullets_only` / `bullets_with_visual` / `two_column` / `metrics_cards`, missing fallback fields, 2-slide & 12-slide 2-column agenda decks, extreme bullet lengths & clamping, multi-aspect images, zero out-of-bounds shapes)
+  - `test_situational_ai_and_workflow_scenarios.py` (18+ scenarios: `only_missing` incremental generation, mid-pipeline LLM failure logging, malformed JSON/empty image fallback, `include_images=False`, 5-round refinement chains, post-generation outline edits + reorder + re-export, corrupted/missing asset file during export, cross-user 403 isolation across all routes)
+- [ ] Verify 56+ scenario tests execute cleanly (`pytest tests/scenarios`).
+- [ ] Commit Step 21 (`Commit #21`).
+
+### Step 22: DB Performance, Logging & Observability Benchmarks + Query Optimization
+- [ ] Build `backend/tests/scenarios/test_db_performance_and_observability.py` simulating high-volume multi-project workloads (25+ projects, 150+ sections, 300+ revisions, 500+ audit events, 300+ LLM metrics) and measuring query counts & latencies.
+- [ ] Identify and optimize real DB bottlenecks:
+  - Eliminate N+1 queries in `ProjectService.list_projects` and `ProjectService.build_project_detail` using batched SQL `GROUP BY` / `IN` queries.
+  - Optimize `AuditService.compute_analytics` to use SQL aggregate queries (`COUNT`, `SUM`, `AVG`, `GROUP BY`) instead of loading all `AuditEventLog` and `LLMCallMetric` ORM rows into Python memory.
+  - Add any beneficial composite indexes via Alembic migration (`alembic revision --autogenerate`) and verify upgrade/downgrade tests still pass.
+- [ ] Document all 56+ scenarios and before/after DB benchmark numbers in `docs/SCENARIOS_AND_PERFORMANCE_REPORT.md`.
+- [ ] Commit Step 22 (`Commit #22`).
+
+### Step 23: Cloud Deployment Plan (Vercel Frontend + Cloud Backend + Managed Postgres)
+- [ ] Author `docs/CLOUD_DEPLOYMENT_PLAN.md` detailing:
+  - Vercel frontend deployment (`frontend/` root directory, build/env configuration, preview/prod domains, Google OAuth origins & callbacks).
+  - Cloud backend hosting options for FastAPI (Render, Railway, Fly.io, Google Cloud Run) with managed PostgreSQL (Neon / Supabase / Render Postgres), Alembic startup migrations, CORS for Vercel preview/prod URLs, and asset storage considerations.
+  - End-to-end production cutover checklist and post-deploy smoke verification steps.
+- [ ] Commit Step 23 (`Commit #23`).
+
+### Step 24: Update Central `README.md` & Final Verification Pass
+- [ ] Update root `README.md` with links to `docs/SCENARIOS_AND_PERFORMANCE_REPORT.md`, `docs/CLOUD_DEPLOYMENT_PLAN.md`, and instructions to run `tests/scenarios/`.
+- [ ] Mark all Phase 6 checklist items complete in `docs/IMPLEMENTATION_PLAN.md`.
+- [ ] Run full regression suite (`ruff`, `pytest -m "not live_ai"`, `tsc --noEmit`, `vitest`, `next build`).
+- [ ] Commit Step 24 (`Commit #24`) -> **Push to `origin feat/platform-implementation`**
