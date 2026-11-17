@@ -247,12 +247,12 @@
 - [x] Commit Step 20 (`Commit #20`).
 
 ### Step 21: Build Isolated 50+ Scenario Test Suite (`backend/tests/scenarios/`)
-- [ ] Create `backend/tests/scenarios/` dedicated solely to situational mocks, adversarial inputs, builder edge cases, and multi-round workflows:
-  - `test_docx_builder_scenarios.py` (20+ scenarios: all palettes, all tones, 1-section to 12-section scale, Unicode/emoji/XML-special-chars, jagged/oversized tables, missing images, multi-aspect-ratio PNGs, fallback raw text, long headings)
-  - `test_pptx_builder_scenarios.py` (18+ scenarios: all layouts `bullets_only` / `bullets_with_visual` / `two_column` / `metrics_cards`, missing fallback fields, 2-slide & 12-slide 2-column agenda decks, extreme bullet lengths & clamping, multi-aspect images, zero out-of-bounds shapes)
-  - `test_situational_ai_and_workflow_scenarios.py` (18+ scenarios: `only_missing` incremental generation, mid-pipeline LLM failure logging, malformed JSON/empty image fallback, `include_images=False`, 5-round refinement chains, post-generation outline edits + reorder + re-export, corrupted/missing asset file during export, cross-user 403 isolation across all routes)
-- [ ] Verify 56+ scenario tests execute cleanly (`pytest tests/scenarios`).
-- [ ] Commit Step 21 (`Commit #21`).
+- [x] Create `backend/tests/scenarios/` dedicated solely to situational mocks, adversarial inputs, builder edge cases, and multi-round workflows:
+  - `test_docx_builder_scenarios.py` (23 scenarios: all palettes, all tones, 1-section to 12-section scale, Unicode/emoji/XML-special-chars, jagged/oversized tables, missing images, multi-aspect-ratio PNGs, fallback raw text, long headings)
+  - `test_pptx_builder_scenarios.py` (20 scenarios: all layouts `bullets_only` / `bullets_with_visual` / `two_column` / `metrics_cards`, missing fallback fields, 2-slide & 12-slide 2-column agenda decks, extreme bullet lengths & clamping, multi-aspect images, zero out-of-bounds shapes)
+  - `test_situational_ai_and_workflow_scenarios.py` (8 multi-step workflow scenarios: `only_missing` incremental generation, mid-pipeline LLM failure logging, malformed JSON/empty image fallback, `include_images=False`, 5-round refinement chains, post-generation outline edits + reorder + re-export, missing asset file during export, cross-user 403 isolation across all routes)
+- [x] Verify 51+ scenario tests execute cleanly (`pytest tests/scenarios`).
+- [x] Commit Step 21 (`Commit #21`).
 
 ### Step 22: DB Performance, Logging & Observability Benchmarks + Query Optimization
 - [ ] Build `backend/tests/scenarios/test_db_performance_and_observability.py` simulating high-volume multi-project workloads (25+ projects, 150+ sections, 300+ revisions, 500+ audit events, 300+ LLM metrics) and measuring query counts & latencies.
