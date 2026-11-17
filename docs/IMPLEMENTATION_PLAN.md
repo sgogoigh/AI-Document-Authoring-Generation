@@ -101,21 +101,21 @@
 - [x] Commit Step 8 (`Commit #8`)
 
 ### Step 9: Generation, Refinement, Feedback, Comments & Monitoring/Reconstruction APIs
-- [ ] Implement `backend/app/api/v1/generation.py`:
+- [x] Implement `backend/app/api/v1/generation.py`:
   - `POST /api/v1/projects/suggest-outline` (Bonus feature)
   - `POST /api/v1/projects/{id}/generate` (sequential/structured section-by-section & slide-by-slide generation with optional image generation toggle and progress state)
   - `POST /api/v1/sections/{section_id}/refine` (AI refinement prompt scoped to that section, creates `section_revisions` + snapshot + audit log)
   - `POST /api/v1/sections/{section_id}/feedback` (`like` | `dislike` | `none`, writes `feedback_events` + updates section)
   - `POST /api/v1/sections/{section_id}/comments`, `GET .../comments`, `DELETE /api/v1/comments/{comment_id}`
   - `GET /api/v1/sections/{section_id}/revisions`
-- [ ] Implement `backend/app/api/v1/monitoring.py`:
+- [x] Implement `backend/app/api/v1/monitoring.py`:
   - `GET /api/v1/monitoring/logs` (filtered audit logs)
   - `GET /api/v1/monitoring/metrics` (LLM & satisfaction analytics)
   - `GET /api/v1/projects/{id}/timeline` (chronological project events & snapshots)
   - `GET /api/v1/projects/{id}/reconstruct` (reconstruct by `version`, `at_timestamp`, or `event_seq_id` + diff)
   - `POST /api/v1/projects/{id}/restore/{version}` (restore historical version cleanly)
-- [ ] Write & run `tests/integration/test_generation_and_refinement_api.py` and `tests/integration/test_monitoring_and_reconstruction_api.py`.
-- [ ] Commit Step 9 (`Commit #9`)
+- [x] Write & run `tests/integration/test_generation_and_refinement_api.py` and `tests/integration/test_monitoring_and_reconstruction_api.py`.
+- [x] Commit Step 9 (`Commit #9`)
 
 ### Step 10: Structured `.docx` and `.pptx` Builders & Export API
 - [ ] Implement `backend/app/services/doc_builder/theme.py` (curated cohesive executive palettes, typography constants, spacing rules).
