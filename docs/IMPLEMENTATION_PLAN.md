@@ -118,16 +118,16 @@
 - [x] Commit Step 9 (`Commit #9`)
 
 ### Step 10: Structured `.docx` and `.pptx` Builders & Export API
-- [ ] Implement `backend/app/services/doc_builder/theme.py` (curated cohesive executive palettes, typography constants, spacing rules).
-- [ ] Implement `backend/app/services/doc_builder/docx_builder.py` (`python-docx`):
+- [x] Implement `backend/app/services/doc_builder/theme.py` (curated cohesive executive palettes, typography constants, spacing rules).
+- [x] Implement `backend/app/services/doc_builder/docx_builder.py` (`python-docx`):
   - Styled cover page, executive outline/TOC summary, Heading 1 numbered sections, shaded summary callout boxes, well-spaced paragraphs, bold-lead-in bullets, styled tables, centered captioned Gemini-generated images, running header & page footer.
-- [ ] Implement `backend/app/services/doc_builder/pptx_builder.py` (`python-pptx`):
+- [x] Implement `backend/app/services/doc_builder/pptx_builder.py` (`python-pptx`):
   - 16:9 widescreen slides, cohesive dark/editorial title slide, Agenda slide, layout-dispatched content slides (`bullets_only`, `bullets_with_visual`, `two_column`, `metrics_cards`), text-fit/overflow safeguards, embedded Gemini-generated visuals with clean framing & caption, footer & slide numbers, and presenter speaker notes.
-- [ ] Implement `backend/app/api/v1/export.py`:
+- [x] Implement `backend/app/api/v1/export.py`:
   - `GET /api/v1/projects/{id}/export` (fetches latest refined content & active assets, builds valid `.docx` or `.pptx`, records `export_records` + `audit_event_logs`, streams file download).
   - `GET /api/v1/projects/{id}/exports` (export history list) and `GET /api/v1/assets/{asset_id}` (authenticated image serving for UI preview).
-- [ ] Write & run `tests/unit/test_docx_builder_unit.py`, `tests/unit/test_pptx_builder_unit.py`, and `tests/integration/test_export_api.py`.
-- [ ] Commit Step 10 (`Commit #10`) -> **Push to `origin feat/platform-implementation` (Push #2)**
+- [x] Write & run `tests/unit/test_docx_builder_unit.py`, `tests/unit/test_pptx_builder_unit.py`, and `tests/integration/test_export_api.py`.
+- [x] Commit Step 10 (`Commit #10`) -> **Push to `origin feat/platform-implementation` (Push #2)**
 
 ---
 
