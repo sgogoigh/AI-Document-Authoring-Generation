@@ -1,7 +1,8 @@
+from collections import defaultdict
 from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
 from app.models.project import DocumentAsset, ExportRecord, Project
@@ -104,24 +105,39 @@ class ProjectService:
             stmt = stmt.where((Project.title.ilike(pat)) | (Project.main_topic.ilike(pat)))
 
         projects = list(db.scalars(stmt.order_by(Project.updated_at.desc())).all())
+        if not projects:
+            return []
+
+        project_ids = [p.id for p in projects]
+
+        sec_rows = db.execute(
+            select(
+                DocumentSection.project_id,
+                func.count(DocumentSection.id),
+                func.sum(case((DocumentSection.like_status == "like", 1), else_=0)),
+                func.sum(case((DocumentSection.like_status == "dislike", 1), else_=0)),
+            )
+            .where(
+                DocumentSection.project_id.in_(project_ids),
+                DocumentSection.is_deleted.is_(False),
+            )
+            .group_by(DocumentSection.project_id)
+        ).all()
+        sec_stats = {
+            pid: (int(cnt or 0), int(likes or 0), int(dislikes or 0))
+            for pid, cnt, likes, dislikes in sec_rows
+        }
+
+        exp_rows = db.execute(
+            select(ExportRecord.project_id, func.count(ExportRecord.id))
+            .where(ExportRecord.project_id.in_(project_ids))
+            .group_by(ExportRecord.project_id)
+        ).all()
+        exp_counts = {pid: int(cnt or 0) for pid, cnt in exp_rows}
+
         summaries: list[ProjectSummaryResponse] = []
         for proj in projects:
-            active_sections = list(
-                db.scalars(
-                    select(DocumentSection).where(
-                        DocumentSection.project_id == proj.id,
-                        DocumentSection.is_deleted.is_(False),
-                    )
-                ).all()
-            )
-            export_count = (
-                db.scalar(
-                    select(func.count())
-                    .select_from(ExportRecord)
-                    .where(ExportRecord.project_id == proj.id)
-                )
-                or 0
-            )
+            sec_cnt, like_cnt, dislike_cnt = sec_stats.get(proj.id, (0, 0, 0))
             summaries.append(
                 ProjectSummaryResponse(
                     id=proj.id,
@@ -132,10 +148,10 @@ class ProjectService:
                     theme_config_json=proj.theme_config_json,
                     ai_outline_suggested=proj.ai_outline_suggested,
                     current_version=proj.current_version,
-                    section_count=len(active_sections),
-                    like_count=sum(1 for s in active_sections if s.like_status == "like"),
-                    dislike_count=sum(1 for s in active_sections if s.like_status == "dislike"),
-                    export_count=export_count,
+                    section_count=sec_cnt,
+                    like_count=like_cnt,
+                    dislike_count=dislike_cnt,
+                    export_count=exp_counts.get(proj.id, 0),
                     created_at=proj.created_at,
                     updated_at=proj.updated_at,
                 )
@@ -151,30 +167,43 @@ class ProjectService:
                 .order_by(DocumentSection.order_index)
             ).all()
         )
+        section_ids = [s.id for s in sections]
+
+        comments_by_sec: dict[str, list[SectionComment]] = defaultdict(list)
+        assets_by_sec: dict[str, list[DocumentAsset]] = defaultdict(list)
+        rev_counts: dict[str, int] = {}
+
+        if section_ids:
+            for c in db.scalars(
+                select(SectionComment)
+                .where(
+                    SectionComment.section_id.in_(section_ids),
+                    SectionComment.deleted_at.is_(None),
+                )
+                .order_by(SectionComment.created_at)
+            ).all():
+                comments_by_sec[c.section_id].append(c)
+
+            for a in db.scalars(
+                select(DocumentAsset)
+                .where(
+                    DocumentAsset.section_id.in_(section_ids),
+                    DocumentAsset.is_active.is_(True),
+                )
+                .order_by(DocumentAsset.created_at)
+            ).all():
+                if a.section_id:
+                    assets_by_sec[a.section_id].append(a)
+
+            for sid, cnt in db.execute(
+                select(SectionRevision.section_id, func.count(SectionRevision.id))
+                .where(SectionRevision.section_id.in_(section_ids))
+                .group_by(SectionRevision.section_id)
+            ).all():
+                rev_counts[sid] = int(cnt or 0)
+
         section_responses: list[SectionDetailResponse] = []
         for sec in sections:
-            comments = list(
-                db.scalars(
-                    select(SectionComment)
-                    .where(SectionComment.section_id == sec.id, SectionComment.deleted_at.is_(None))
-                    .order_by(SectionComment.created_at)
-                ).all()
-            )
-            assets = list(
-                db.scalars(
-                    select(DocumentAsset)
-                    .where(DocumentAsset.section_id == sec.id, DocumentAsset.is_active.is_(True))
-                    .order_by(DocumentAsset.created_at)
-                ).all()
-            )
-            rev_count = (
-                db.scalar(
-                    select(func.count())
-                    .select_from(SectionRevision)
-                    .where(SectionRevision.section_id == sec.id)
-                )
-                or 0
-            )
             section_responses.append(
                 SectionDetailResponse(
                     id=sec.id,
@@ -186,9 +215,9 @@ class ProjectService:
                     current_content_json=sec.current_content_json,
                     current_content_text=sec.current_content_text,
                     like_status=sec.like_status,
-                    revision_count=rev_count,
-                    comments=[CommentResponse.model_validate(c) for c in comments],
-                    assets=[AssetResponse.model_validate(a) for a in assets],
+                    revision_count=rev_counts.get(sec.id, 0),
+                    comments=[CommentResponse.model_validate(c) for c in comments_by_sec.get(sec.id, [])],
+                    assets=[AssetResponse.model_validate(a) for a in assets_by_sec.get(sec.id, [])],
                     created_at=sec.created_at,
                     updated_at=sec.updated_at,
                 )

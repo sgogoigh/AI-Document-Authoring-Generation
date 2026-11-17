@@ -193,74 +193,117 @@ class AuditService:
         user_id: str | None = None,
         project_id: str | None = None,
     ) -> dict:
-        metric_stmt = select(LLMCallMetric)
-        audit_stmt = select(AuditEventLog)
-        export_stmt = select(ExportRecord)
-        section_stmt = select(DocumentSection).where(DocumentSection.is_deleted.is_(False))
+        llm_filters = []
+        audit_filters = []
+        export_filters = []
+        section_filters = [DocumentSection.is_deleted.is_(False)]
 
         if user_id:
-            metric_stmt = metric_stmt.where(LLMCallMetric.user_id == user_id)
-            audit_stmt = audit_stmt.where(AuditEventLog.user_id == user_id)
-            export_stmt = export_stmt.where(ExportRecord.user_id == user_id)
+            llm_filters.append(LLMCallMetric.user_id == user_id)
+            audit_filters.append(AuditEventLog.user_id == user_id)
+            export_filters.append(ExportRecord.user_id == user_id)
         if project_id:
-            metric_stmt = metric_stmt.where(LLMCallMetric.project_id == project_id)
-            audit_stmt = audit_stmt.where(AuditEventLog.project_id == project_id)
-            export_stmt = export_stmt.where(ExportRecord.project_id == project_id)
-            section_stmt = section_stmt.where(DocumentSection.project_id == project_id)
+            llm_filters.append(LLMCallMetric.project_id == project_id)
+            audit_filters.append(AuditEventLog.project_id == project_id)
+            export_filters.append(ExportRecord.project_id == project_id)
+            section_filters.append(DocumentSection.project_id == project_id)
+        elif user_id:
+            from app.models.project import Project
 
-        metrics = list(db.scalars(metric_stmt).all())
-        latencies = sorted(m.latency_ms for m in metrics if m.latency_ms is not None)
-        total_calls = len(metrics)
-        successful_calls = sum(1 for m in metrics if m.status == "success")
-        failed_calls = sum(1 for m in metrics if m.status == "error")
+            user_proj_subq = select(Project.id).where(Project.user_id == user_id)
+            section_filters.append(DocumentSection.project_id.in_(user_proj_subq))
 
+        # 1. SQL-aggregated LLM metrics (avoids hydrating ORM rows)
+        llm_agg_rows = db.execute(
+            select(
+                LLMCallMetric.operation,
+                LLMCallMetric.status,
+                func.count(LLMCallMetric.id),
+                func.coalesce(func.sum(LLMCallMetric.input_tokens), 0),
+                func.coalesce(func.sum(LLMCallMetric.output_tokens), 0),
+                func.coalesce(func.sum(LLMCallMetric.total_tokens), 0),
+                func.coalesce(func.sum(LLMCallMetric.latency_ms), 0.0),
+            )
+            .where(*llm_filters)
+            .group_by(LLMCallMetric.operation, LLMCallMetric.status)
+        ).all()
+
+        total_calls = 0
+        successful_calls = 0
+        failed_calls = 0
+        total_in = 0
+        total_out = 0
+        total_tok = 0
+        total_latency_sum = 0.0
         op_buckets: dict[str, dict] = defaultdict(
-            lambda: {"count": 0, "tokens": 0, "latencies": [], "errors": 0}
+            lambda: {"count": 0, "tokens": 0, "lat_sum": 0.0, "errors": 0}
         )
-        for m in metrics:
-            b = op_buckets[m.operation]
-            b["count"] += 1
-            b["tokens"] += m.total_tokens
-            b["latencies"].append(m.latency_ms)
-            if m.status == "error":
-                b["errors"] += 1
+
+        for op, st, cnt, in_tok, out_tok, tot_tok, lat_sum in llm_agg_rows:
+            c = int(cnt or 0)
+            total_calls += c
+            if st == "success":
+                successful_calls += c
+            elif st == "error":
+                failed_calls += c
+            total_in += int(in_tok or 0)
+            total_out += int(out_tok or 0)
+            total_tok += int(tot_tok or 0)
+            total_latency_sum += float(lat_sum or 0.0)
+
+            b = op_buckets[op]
+            b["count"] += c
+            b["tokens"] += int(tot_tok or 0)
+            b["lat_sum"] += float(lat_sum or 0.0)
+            if st == "error":
+                b["errors"] += c
 
         operations_breakdown = {
             op: {
                 "count": data["count"],
                 "total_tokens": data["tokens"],
-                "avg_latency_ms": round(sum(data["latencies"]) / len(data["latencies"]), 2)
-                if data["latencies"]
-                else 0.0,
+                "avg_latency_ms": round(data["lat_sum"] / data["count"], 2) if data["count"] else 0.0,
                 "errors": data["errors"],
             }
             for op, data in op_buckets.items()
         }
 
-        audit_events = list(db.scalars(audit_stmt).all())
-        event_type_counts: dict[str, int] = defaultdict(int)
-        for ev in audit_events:
-            event_type_counts[ev.event_type] += 1
+        # 2. Sorted scalar latencies for exact p50/p95 without ORM overhead
+        latencies = list(
+            db.scalars(
+                select(LLMCallMetric.latency_ms)
+                .where(*llm_filters)
+                .order_by(LLMCallMetric.latency_ms)
+            ).all()
+        )
+        float_latencies = [float(x) for x in latencies if x is not None]
 
-        if user_id and not project_id:
-            from app.models.project import Project
+        # 3. SQL-aggregated Audit event counts (skips heavy JSON blobs)
+        audit_rows = db.execute(
+            select(AuditEventLog.event_type, func.count(AuditEventLog.seq_id))
+            .where(*audit_filters)
+            .group_by(AuditEventLog.event_type)
+        ).all()
+        event_type_counts = {ev_type: int(cnt or 0) for ev_type, cnt in audit_rows}
+        total_audit_events = sum(event_type_counts.values())
 
-            user_proj_ids = list(
-                db.scalars(select(Project.id).where(Project.user_id == user_id)).all()
-            )
-            if user_proj_ids:
-                section_stmt = section_stmt.where(DocumentSection.project_id.in_(user_proj_ids))
-            else:
-                section_stmt = section_stmt.where(DocumentSection.project_id == "__none__")
-
-        sections = list(db.scalars(section_stmt).all())
-        likes = sum(1 for s in sections if s.like_status == "like")
-        dislikes = sum(1 for s in sections if s.like_status == "dislike")
-        neutral = sum(1 for s in sections if s.like_status == "none")
+        # 4. SQL-aggregated Feedback satisfaction counts
+        fb_rows = db.execute(
+            select(DocumentSection.like_status, func.count(DocumentSection.id))
+            .where(*section_filters)
+            .group_by(DocumentSection.like_status)
+        ).all()
+        fb_map = {rating: int(cnt or 0) for rating, cnt in fb_rows}
+        likes = fb_map.get("like", 0)
+        dislikes = fb_map.get("dislike", 0)
+        neutral = fb_map.get("none", 0)
         rated_total = likes + dislikes
         satisfaction_rate = round((likes / rated_total) * 100.0, 1) if rated_total else None
 
-        total_exports = db.scalar(select(func.count()).select_from(export_stmt.subquery())) or 0
+        # 5. SQL Export count
+        total_exports = (
+            db.scalar(select(func.count(ExportRecord.id)).where(*export_filters)) or 0
+        )
 
         return {
             "llm": {
@@ -268,12 +311,12 @@ class AuditService:
                 "successful_calls": successful_calls,
                 "failed_calls": failed_calls,
                 "error_rate": round((failed_calls / total_calls) * 100.0, 2) if total_calls else 0.0,
-                "total_input_tokens": sum(m.input_tokens for m in metrics),
-                "total_output_tokens": sum(m.output_tokens for m in metrics),
-                "total_tokens": sum(m.total_tokens for m in metrics),
-                "avg_latency_ms": round(sum(latencies) / len(latencies), 2) if latencies else 0.0,
-                "p50_latency_ms": _percentile(latencies, 0.50),
-                "p95_latency_ms": _percentile(latencies, 0.95),
+                "total_input_tokens": total_in,
+                "total_output_tokens": total_out,
+                "total_tokens": total_tok,
+                "avg_latency_ms": round(total_latency_sum / total_calls, 2) if total_calls else 0.0,
+                "p50_latency_ms": _percentile(float_latencies, 0.50),
+                "p95_latency_ms": _percentile(float_latencies, 0.95),
                 "operations_breakdown": operations_breakdown,
             },
             "feedback": {
@@ -282,9 +325,9 @@ class AuditService:
                 "none_count": neutral,
                 "satisfaction_rate_pct": satisfaction_rate,
             },
-            "exports": {"total_exports": total_exports},
+            "exports": {"total_exports": int(total_exports)},
             "audit": {
-                "total_events": len(audit_events),
-                "event_type_counts": dict(event_type_counts),
+                "total_events": total_audit_events,
+                "event_type_counts": event_type_counts,
             },
         }

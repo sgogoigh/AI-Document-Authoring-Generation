@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime, timezone
 
 from sqlalchemy import select
@@ -86,22 +87,33 @@ class ReconstructionService:
                 .order_by(DocumentSection.order_index)
             ).all()
         )
+        comments_by_sec: dict[str, list[SectionComment]] = defaultdict(list)
+        assets_by_sec: dict[str, list[DocumentAsset]] = defaultdict(list)
+
+        if sections:
+            for c in db.scalars(
+                select(SectionComment)
+                .where(
+                    SectionComment.project_id == project.id,
+                    SectionComment.deleted_at.is_(None),
+                )
+                .order_by(SectionComment.created_at)
+            ).all():
+                comments_by_sec[c.section_id].append(c)
+
+            for a in db.scalars(
+                select(DocumentAsset)
+                .where(
+                    DocumentAsset.project_id == project.id,
+                    DocumentAsset.is_active.is_(True),
+                )
+                .order_by(DocumentAsset.created_at)
+            ).all():
+                if a.section_id:
+                    assets_by_sec[a.section_id].append(a)
+
         section_entries = []
         for sec in sections:
-            comments = list(
-                db.scalars(
-                    select(SectionComment)
-                    .where(SectionComment.section_id == sec.id, SectionComment.deleted_at.is_(None))
-                    .order_by(SectionComment.created_at)
-                ).all()
-            )
-            assets = list(
-                db.scalars(
-                    select(DocumentAsset)
-                    .where(DocumentAsset.section_id == sec.id, DocumentAsset.is_active.is_(True))
-                    .order_by(DocumentAsset.created_at)
-                ).all()
-            )
             section_entries.append(
                 {
                     "id": sec.id,
@@ -114,9 +126,9 @@ class ReconstructionService:
                     "like_status": sec.like_status,
                     "comments": [
                         {"id": c.id, "body": c.body, "created_at": c.created_at.isoformat()}
-                        for c in comments
+                        for c in comments_by_sec.get(sec.id, [])
                     ],
-                    "asset_ids": [a.id for a in assets],
+                    "asset_ids": [a.id for a in assets_by_sec.get(sec.id, [])],
                 }
             )
         return {
@@ -230,34 +242,43 @@ class ReconstructionService:
             return dt
 
         cutoff_ts = _norm_dt(max_ts) if max_ts else None
+
+        # Batch fetch revisions, feedback, and comments for the project in 3 queries
+        rev_stmt = select(SectionRevision).where(SectionRevision.project_id == project.id)
+        if max_version is not None:
+            rev_stmt = rev_stmt.where(SectionRevision.project_version <= max_version)
+        if cutoff_ts is not None:
+            rev_stmt = rev_stmt.where(SectionRevision.created_at <= cutoff_ts)
+        latest_rev_by_sec: dict[str, SectionRevision] = {}
+        for rev in db.scalars(rev_stmt.order_by(SectionRevision.revision_number.desc())).all():
+            if rev.section_id not in latest_rev_by_sec:
+                latest_rev_by_sec[rev.section_id] = rev
+
+        fb_stmt = select(FeedbackEvent).where(FeedbackEvent.project_id == project.id)
+        if cutoff_ts is not None:
+            fb_stmt = fb_stmt.where(FeedbackEvent.created_at <= cutoff_ts)
+        latest_fb_by_sec: dict[str, FeedbackEvent] = {}
+        for fb in db.scalars(fb_stmt.order_by(FeedbackEvent.created_at.desc())).all():
+            if fb.section_id not in latest_fb_by_sec:
+                latest_fb_by_sec[fb.section_id] = fb
+
+        comment_stmt = select(SectionComment).where(SectionComment.project_id == project.id)
+        if cutoff_ts is not None:
+            comment_stmt = comment_stmt.where(SectionComment.created_at <= cutoff_ts)
+        comments_by_sec: dict[str, list[dict]] = defaultdict(list)
+        for c in db.scalars(comment_stmt.order_by(SectionComment.created_at)).all():
+            if not c.deleted_at or (cutoff_ts and _norm_dt(c.deleted_at) > cutoff_ts):
+                comments_by_sec[c.section_id].append(
+                    {"id": c.id, "body": c.body, "created_at": c.created_at.isoformat()}
+                )
+
         section_entries = []
         for sec in sections:
             if cutoff_ts and _norm_dt(sec.created_at) > cutoff_ts:
                 continue
 
-            rev_stmt = select(SectionRevision).where(SectionRevision.section_id == sec.id)
-            if max_version is not None:
-                rev_stmt = rev_stmt.where(SectionRevision.project_version <= max_version)
-            if cutoff_ts is not None:
-                rev_stmt = rev_stmt.where(SectionRevision.created_at <= cutoff_ts)
-            latest_rev = db.scalar(
-                rev_stmt.order_by(SectionRevision.revision_number.desc()).limit(1)
-            )
-
-            fb_stmt = select(FeedbackEvent).where(FeedbackEvent.section_id == sec.id)
-            if cutoff_ts is not None:
-                fb_stmt = fb_stmt.where(FeedbackEvent.created_at <= cutoff_ts)
-            latest_fb = db.scalar(fb_stmt.order_by(FeedbackEvent.created_at.desc()).limit(1))
-
-            comment_stmt = select(SectionComment).where(SectionComment.section_id == sec.id)
-            if cutoff_ts is not None:
-                comment_stmt = comment_stmt.where(SectionComment.created_at <= cutoff_ts)
-            comments = [
-                {"id": c.id, "body": c.body, "created_at": c.created_at.isoformat()}
-                for c in db.scalars(comment_stmt.order_by(SectionComment.created_at)).all()
-                if not c.deleted_at or (cutoff_ts and _norm_dt(c.deleted_at) > cutoff_ts)
-            ]
-
+            latest_rev = latest_rev_by_sec.get(sec.id)
+            latest_fb = latest_fb_by_sec.get(sec.id)
             content_json = latest_rev.new_content_json if latest_rev else None
             section_entries.append(
                 {
@@ -269,7 +290,7 @@ class ReconstructionService:
                     "current_content_json": content_json,
                     "current_content_text": render_content_to_text(content_json),
                     "like_status": latest_fb.rating if latest_fb else "none",
-                    "comments": comments,
+                    "comments": comments_by_sec.get(sec.id, []),
                     "asset_ids": [],
                 }
             )
