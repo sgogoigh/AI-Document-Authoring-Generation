@@ -141,12 +141,12 @@
 - [x] Commit Step 11 (`Commit #11`)
 
 ### Step 12: Landing Page, Login, Registration & Google Sign-In UI
-- [ ] Build aesthetic product landing page (`/`) showcasing the `Configure → Generate → Refine → Export` workflow with clear CTAs.
-- [ ] Build `/login`, `/register`, and `/auth/google/callback` pages:
+- [x] Build aesthetic product landing page (`/`) showcasing the `Configure → Generate → Refine → Export` workflow with clear CTAs.
+- [x] Build `/login`, `/register`, and `/auth/google/callback` pages:
   - Email/password login & registration with inline validation and loading feedback.
   - **"Continue with Google"** button triggering Google OAuth flow + graceful feedback when OAuth client credentials are/aren't configured.
-- [ ] Write & run component tests `src/__tests__/auth_pages.test.tsx`.
-- [ ] Commit Step 12 (`Commit #12`)
+- [x] Write & run component tests `src/__tests__/auth_pages.test.tsx`.
+- [x] Commit Step 12 (`Commit #12`)
 
 ### Step 13: Project Dashboard & Document Configuration Wizard (+ Bonus AI-Suggest Outline)
 - [ ] Build `/dashboard`:
