@@ -18,9 +18,9 @@
 - [x] Create feature branch `feat/platform-implementation` and commit plan documents (`Commit #1`)
 
 ### Step 2: Repository Hygiene, `.gitignore` & Standalone Service Skeletons
-- [ ] Update root `.gitignore` for Next.js (`node_modules/`, `.next/`, `out/`, `.env.local`), SQLite (`*.db`, `*.sqlite*`), generated artifacts (`storage/`), coverage, and Playwright outputs while keeping `.env.example` tracked.
-- [ ] Scaffold `backend/` and `frontend/` directories with `.env.example` files and verify root `.env` `GEMINI_API_KEY` availability without ever committing secrets.
-- [ ] Commit Step 2 (`Commit #2`)
+- [x] Update root `.gitignore` for Next.js (`node_modules/`, `.next/`, `out/`, `.env.local`), SQLite (`*.db`, `*.sqlite*`), generated artifacts (`storage/`), coverage, and Playwright outputs while keeping `.env.example` tracked.
+- [x] Scaffold `backend/` and `frontend/` directories with `.env.example` files and verify root `.env` `GEMINI_API_KEY` availability without ever committing secrets.
+- [x] Commit Step 2 (`Commit #2`)
 
 ---
 

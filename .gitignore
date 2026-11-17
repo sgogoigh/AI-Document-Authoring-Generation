@@ -151,13 +151,43 @@ activemq-data/
 
 # Environments
 .env
+.env.local
+.env.*.local
+!.env.example
 .envrc
 .venv
+backend/.venv/
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Databases & Generated Storage
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite3-journal
+storage/
+backend/storage/
+test_artifacts/
+
+# Node / Next.js / Playwright
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+frontend/out/
+playwright-report/
+frontend/playwright-report/
+test-results/
+frontend/test-results/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.tsbuildinfo
+next-env.d.ts
 
 # Conda environments
 conda-meta/
