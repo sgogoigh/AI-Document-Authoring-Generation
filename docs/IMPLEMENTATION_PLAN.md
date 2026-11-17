@@ -134,11 +134,11 @@
 ## Phase 4 — Next.js Frontend (Aesthetic Editorial UI & Full Feature Set)
 
 ### Step 11: Next.js App Foundation, Design System & Auth Context
-- [ ] Initialize standalone Next.js 15+ (App Router, TypeScript, Tailwind CSS) inside `frontend/`.
-- [ ] Configure `next.config.ts` (`output: 'standalone'`), typography (`Plus Jakarta Sans` / `Newsreader` / `JetBrains Mono`), refined editorial color tokens, glass/card surfaces, subtle motion, and responsive layout primitives.
-- [ ] Implement `frontend/src/lib/types.ts`, `frontend/src/lib/api.ts` (typed fetch wrapper with JWT refresh/error handling), and `frontend/src/lib/auth-context.tsx`.
-- [ ] Write & run Vitest setup + `src/__tests__/api_and_auth.test.tsx`.
-- [ ] Commit Step 11 (`Commit #11`)
+- [x] Initialize standalone Next.js 15+ (App Router, TypeScript, Tailwind CSS) inside `frontend/`.
+- [x] Configure `next.config.ts` (`output: 'standalone'`), typography (`Plus Jakarta Sans` / `Newsreader` / `JetBrains Mono`), refined editorial color tokens, glass/card surfaces, subtle motion, and responsive layout primitives.
+- [x] Implement `frontend/src/lib/types.ts`, `frontend/src/lib/api.ts` (typed fetch wrapper with JWT refresh/error handling), and `frontend/src/lib/auth-context.tsx`.
+- [x] Write & run Vitest setup + `src/__tests__/api_and_auth.test.tsx`.
+- [x] Commit Step 11 (`Commit #11`)
 
 ### Step 12: Landing Page, Login, Registration & Google Sign-In UI
 - [ ] Build aesthetic product landing page (`/`) showcasing the `Configure → Generate → Refine → Export` workflow with clear CTAs.
