@@ -27,22 +27,22 @@
 ## Phase 1 — Backend Core, Database Schema, Logging, Monitoring & Reconstruction
 
 ### Step 3: FastAPI Foundation & Isolated Python Virtual Environment (`backend/.venv`)
-- [ ] Create `backend/.venv` using Python 3.13.
-- [ ] Create `backend/requirements.txt`, `backend/requirements-dev.txt`, `backend/pyproject.toml`.
+- [x] Create `backend/.venv` using Python 3.13.
+- [x] Create `backend/requirements.txt`, `backend/requirements-dev.txt`, `backend/pyproject.toml`.
   - Runtime: `fastapi`, `uvicorn[standard]`, `sqlalchemy>=2.0`, `alembic`, `pydantic-settings`, `python-jose[cryptography]`, `passlib[bcrypt]` / `argon2-cffi`, `google-auth`, `google-genai`, `python-docx`, `python-pptx`, `pillow`, `httpx`, `python-multipart`.
   - Dev/Test: `pytest`, `pytest-asyncio`, `pytest-cov`, `httpx`, `ruff`, `pymupdf` (for PDF/PNG rendering checks if needed).
-- [ ] Implement `backend/app/core/config.py` (Pydantic Settings loading `GEMINI_API_KEY`, `DATABASE_URL`, `JWT_SECRET_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `CORS_ORIGINS`, `STORAGE_DIR`).
-- [ ] Implement `backend/app/core/database.py` (SQLAlchemy engine supporting SQLite WAL mode & PostgreSQL, session dependency) + `/api/v1/health` endpoint.
-- [ ] Write & run unit test `tests/unit/test_health_and_config.py`.
-- [ ] Commit Step 3 (`Commit #3`)
+- [x] Implement `backend/app/core/config.py` (Pydantic Settings loading `GEMINI_API_KEY`, `DATABASE_URL`, `JWT_SECRET_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `CORS_ORIGINS`, `STORAGE_DIR`).
+- [x] Implement `backend/app/core/database.py` (SQLAlchemy engine supporting SQLite WAL mode & PostgreSQL, session dependency) + `/api/v1/health` endpoint.
+- [x] Write & run unit test `tests/unit/test_health_and_config.py`.
+- [x] Commit Step 3 (`Commit #3`)
 
 ### Step 4: Database Models & Alembic Migrations (Domain + Observability + Reconstruction)
-- [ ] Implement ORM models:
+- [x] Implement ORM models:
   - `users`, `projects`, `document_sections`, `section_revisions`, `section_comments`, `feedback_events`, `document_assets`, `export_records`
   - `audit_event_logs`, `llm_call_metrics`, `project_snapshots`
-- [ ] Initialize Alembic (`backend/alembic/`) and generate initial migration cleanly applied to SQLite.
-- [ ] Write & run `tests/unit/test_models_and_migrations.py` verifying foreign keys, indexes, cascade/soft-delete behavior, and migration upgrade/downgrade.
-- [ ] Commit Step 4 (`Commit #4`)
+- [x] Initialize Alembic (`backend/alembic/`) and generate initial migration cleanly applied to SQLite.
+- [x] Write & run `tests/unit/test_models_and_migrations.py` verifying foreign keys, indexes, cascade/soft-delete behavior, and migration upgrade/downgrade.
+- [x] Commit Step 4 (`Commit #4`)
 
 ### Step 5: Audit Logging Middleware, Monitoring Service & Reconstruction Engine
 - [ ] Implement `backend/app/core/logging_middleware.py` assigning `X-Trace-Id` to every request and recording HTTP timings/errors.
