@@ -63,15 +63,15 @@
 ## Phase 2 — Authentication (JWT + Google OAuth) & Project Configuration APIs
 
 ### Step 6: Security Utilities, Email/Password Auth & Google OAuth2/OIDC Verification
-- [ ] Implement `backend/app/core/security.py`:
+- [x] Implement `backend/app/core/security.py`:
   - Argon2/bcrypt password hashing & verification
   - JWT creation/decoding (`access_token`, `refresh_token`)
-- [ ] Implement `backend/app/services/google_oauth_service.py`:
+- [x] Implement `backend/app/services/google_oauth_service.py`:
   - Google ID Token verification (`google.oauth2.id_token.verify_oauth2_token`) + OAuth2 authorization code exchange flow (`/auth/google/url`, `/auth/google/callback`, `/auth/google/token`)
   - Account linking rules (`local` -> `hybrid`, new `google` user creation, avatar sync)
-- [ ] Implement `backend/app/api/v1/auth.py` (`register`, `login`, `google`, `google/url`, `google/callback`, `refresh`, `me`) with audit logging on every auth event.
-- [ ] Write & run comprehensive tests `tests/integration/test_auth_and_google_oauth_api.py` (including cryptographic RSA-signed OIDC ID token verification tests and Google OAuth code-exchange tests).
-- [ ] Commit Step 6 (`Commit #6`)
+- [x] Implement `backend/app/api/v1/auth.py` (`register`, `login`, `google`, `google/url`, `google/callback`, `refresh`, `me`) with audit logging on every auth event.
+- [x] Write & run comprehensive tests `tests/integration/test_auth_and_google_oauth_api.py` (including cryptographic RSA-signed OIDC ID token verification tests and Google OAuth code-exchange tests).
+- [x] Commit Step 6 (`Commit #6`)
 
 ### Step 7: Project Management & Document Configuration (Scaffolding) APIs
 - [ ] Implement `backend/app/services/project_service.py` and `backend/app/api/v1/projects.py`:
