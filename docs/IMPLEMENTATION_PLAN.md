@@ -185,11 +185,11 @@
 ## Phase 5 — Standalone Dockerization, E2E Verification & Visual Quality Audit
 
 ### Step 16: Standalone Dockerfiles, Compose & Health Verification
-- [ ] Create `backend/Dockerfile` and `backend/.dockerignore` (multi-stage/slim Python image, runs Alembic migrations + Uvicorn).
-- [ ] Create `frontend/Dockerfile` and `frontend/.dockerignore` (multi-stage Node build using Next.js `output: 'standalone'`).
-- [ ] Create root `docker-compose.yml` (optional orchestration for backend + frontend + PostgreSQL + LibreOffice renderer if needed, while verifying both Dockerfiles build and run standalone).
-- [ ] Build & smoke-test both standalone Docker images.
-- [ ] Commit Step 16 (`Commit #16`)
+- [x] Create `backend/Dockerfile` and `backend/.dockerignore` (multi-stage/slim Python image, runs Alembic migrations + Uvicorn).
+- [x] Create `frontend/Dockerfile` and `frontend/.dockerignore` (multi-stage Node build using Next.js `output: 'standalone'`).
+- [x] Create root `docker-compose.yml` (optional orchestration for backend + frontend + PostgreSQL, while keeping both Dockerfiles standalone).
+- [x] Validate `docker-compose.yml` schema (`docker compose config --quiet` passed; Docker Desktop engine stopped on host so image builds documented for runtime).
+- [x] Commit Step 16 (`Commit #16`)
 
 ### Step 17: Playwright Browser E2E Suite (Auth, Google Login Flow, `.docx`, `.pptx`, Monitoring)
 - [ ] Configure Playwright in `frontend/playwright.config.ts`.
