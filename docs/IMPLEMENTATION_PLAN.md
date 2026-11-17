@@ -149,14 +149,14 @@
 - [x] Commit Step 12 (`Commit #12`)
 
 ### Step 13: Project Dashboard & Document Configuration Wizard (+ Bonus AI-Suggest Outline)
-- [ ] Build `/dashboard`:
+- [x] Build `/dashboard`:
   - Stats bar (total projects, `.docx` vs `.pptx`, exports, satisfaction metrics), search & format filters, responsive project cards showing status, version, section count, last updated, quick open/export/delete.
-- [ ] Build `/projects/new` (Multi-step Configuration Wizard):
+- [x] Build `/projects/new` (Multi-step Configuration Wizard):
   - Step A: Choose Format (`.docx` Word Report vs `.pptx` Presentation Deck) + Main Topic/Prompt + Theme/Tone & Visual Image Generation toggle.
   - Step B (**Bonus Feature**): **"AI-Suggest Outline"** button (requires only main topic) -> displays suggested section headers or slide titles with **Accept All**, **Edit Inline**, **Add/Remove/Reorder**, or **Discard** controls.
   - Step C: Manual outline editor (`.docx`: add/remove/drag-or-button reorder section headers; `.pptx`: set slide count & edit each slide title) -> Save & Launch Generation.
-- [ ] Write & run component tests `src/__tests__/dashboard_and_configurator.test.tsx`.
-- [ ] Commit Step 13 (`Commit #13`)
+- [x] Write & run component tests `src/__tests__/dashboard_and_configurator.test.tsx`.
+- [x] Commit Step 13 (`Commit #13`)
 
 ### Step 14: Interactive Refinement Studio, Revision History & Export UI
 - [ ] Build `/projects/[id]` (Split-pane Editorial Studio):
