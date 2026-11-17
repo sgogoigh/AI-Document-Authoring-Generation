@@ -73,7 +73,7 @@ export default function DashboardPage() {
 
   const handleQuickExport = async (project: ProjectSummary) => {
     try {
-      const { blob, filename } = await api.downloadExport(project.id);
+      const { blob, filename } = await api.downloadExport(project.id, project.doc_type);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

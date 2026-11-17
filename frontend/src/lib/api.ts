@@ -219,7 +219,10 @@ export const api = {
     request<SectionRevision[]>(`/sections/${sectionId}/revisions`),
 
   // Export & Asset Blob Fetch
-  downloadExport: async (projectId: string): Promise<{ blob: Blob; filename: string }> => {
+  downloadExport: async (
+    projectId: string,
+    fallbackExt: DocType = "docx"
+  ): Promise<{ blob: Blob; filename: string }> => {
     const { accessToken } = getStoredTokens();
     const resp = await fetch(`${API_BASE}/projects/${projectId}/export`, {
       headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
@@ -231,7 +234,7 @@ export const api = {
     const match = disp.match(/filename="([^"]+)"/);
     return {
       blob: await resp.blob(),
-      filename: match?.[1] || `document_${projectId}.docx`,
+      filename: match?.[1] || `document_${projectId}.${fallbackExt}`,
     };
   },
 

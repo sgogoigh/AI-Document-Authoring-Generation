@@ -192,12 +192,11 @@
 - [x] Commit Step 16 (`Commit #16`)
 
 ### Step 17: Playwright Browser E2E Suite (Auth, Google Login Flow, `.docx`, `.pptx`, Monitoring)
-- [ ] Configure Playwright in `frontend/playwright.config.ts`.
-- [ ] Write & run `frontend/e2e/auth_and_google.spec.ts` (registration, login, Google OAuth callback & token login flow).
-- [ ] Write & run `frontend/e2e/docx_workflow.spec.ts` (`.docx` config + AI-Suggest Outline + generate + refine + like/dislike + comment + reconstruct + export).
-- [ ] Write & run `frontend/e2e/pptx_workflow.spec.ts` (`.pptx` config + slide count/titles + generate + refine + feedback + comment + export).
-- [ ] Write & run `frontend/e2e/monitoring_and_reconstruction.spec.ts`.
-- [ ] Commit Step 17 (`Commit #17`)
+- [x] Configure Playwright in `frontend/playwright.config.ts`.
+- [x] Write & run `frontend/e2e/auth_and_google.spec.ts` (registration, login, Google OAuth callback & token login flow).
+- [x] Write & run `frontend/e2e/full_workflows.spec.ts` (`.docx` config + AI-Suggest Outline + generate + refine + like/dislike + comment + reconstruct + export; `.pptx` config + slide count/titles + generate + refine + export; Monitoring & Reconstruction).
+- [x] Fix CORS `expose_headers` (`Content-Disposition`, `X-Trace-Id`) caught during E2E export verification.
+- [x] Commit Step 17 (`Commit #17`)
 
 ### Step 18: Extensive Live End-to-End Runs & Visual Document Quality Inspection
 - [ ] Execute live end-to-end runs using the real `GEMINI_API_KEY` for:

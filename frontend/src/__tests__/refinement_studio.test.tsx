@@ -130,6 +130,6 @@ describe("Interactive Refinement Studio", () => {
 
     // Export button
     await user.click(screen.getByRole("button", { name: /Export \.docx/i }));
-    await waitFor(() => expect(exportSpy).toHaveBeenCalledWith("p1"));
+    await waitFor(() => expect(exportSpy).toHaveBeenCalledWith("p1", "docx"));
   });
 });
