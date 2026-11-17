@@ -36,6 +36,8 @@ Authenticated users configure structured business documents (**Microsoft Word `.
 - [Architecture & Database Schema](docs/ARCHITECTURE_AND_DB_SCHEMA.md)
 - [Test & Verification Plan](docs/TEST_AND_VERIFICATION_PLAN.md)
 - [Live E2E & Visual QA Report](docs/E2E_AND_VISUAL_QA_REPORT.md)
+- [Scenario Testing & DB Performance Report](docs/SCENARIOS_AND_PERFORMANCE_REPORT.md)
+- [Cloud Deployment Plan (Vercel + Cloud Backend)](docs/CLOUD_DEPLOYMENT_PLAN.md)
 
 ```text
 AI-Document-Authoring-Generation/
@@ -132,6 +134,12 @@ Each service ships with an independent production `Dockerfile`:
 
 ---
 
+## Cloud Deployment (Vercel Frontend + Cloud Backend)
+
+For production cloud hosting (**Next.js on Vercel** + **FastAPI container on Render / Railway / Fly.io / Google Cloud Run** + **Managed PostgreSQL**), see the step-by-step [Cloud Deployment Plan](docs/CLOUD_DEPLOYMENT_PLAN.md) covering environment variables, persistent storage for generated PNGs, CORS origin configuration, Alembic startup migrations, and Google OAuth production setup.
+
+---
+
 ## API Usage Examples
 
 ```bash
@@ -168,6 +176,8 @@ curl -L http://localhost:8000/api/v1/projects/<PROJECT_ID>/export \
 cd backend
 .\.venv\Scripts\python.exe -m ruff check app tests
 .\.venv\Scripts\python.exe -m pytest -m "not live_ai"
+# Isolated 57-case scenario & DB performance benchmark suite:
+.\.venv\Scripts\python.exe -m pytest tests/scenarios -s
 # Including live Gemini API + Document Quality tests (uses GEMINI_API_KEY):
 .\.venv\Scripts\python.exe -m pytest
 ```

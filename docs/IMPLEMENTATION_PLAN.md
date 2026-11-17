@@ -271,7 +271,7 @@
 - [x] Commit Step 23 (`Commit #23`).
 
 ### Step 24: Update Central `README.md` & Final Verification Pass
-- [ ] Update root `README.md` with links to `docs/SCENARIOS_AND_PERFORMANCE_REPORT.md`, `docs/CLOUD_DEPLOYMENT_PLAN.md`, and instructions to run `tests/scenarios/`.
-- [ ] Mark all Phase 6 checklist items complete in `docs/IMPLEMENTATION_PLAN.md`.
-- [ ] Run full regression suite (`ruff`, `pytest -m "not live_ai"`, `tsc --noEmit`, `vitest`, `next build`).
-- [ ] Commit Step 24 (`Commit #24`) -> **Push to `origin feat/platform-implementation`**
+- [x] Update root `README.md` with links to `docs/SCENARIOS_AND_PERFORMANCE_REPORT.md`, `docs/CLOUD_DEPLOYMENT_PLAN.md`, and instructions to run `tests/scenarios/`.
+- [x] Mark all Phase 6 checklist items complete in `docs/IMPLEMENTATION_PLAN.md`.
+- [x] Run full regression suite (`ruff`, `pytest -m "not live_ai"`, `tsc --noEmit`, `vitest`, `next build`).
+- [x] Commit Step 24 (`Commit #24`) -> **Push to `origin feat/platform-implementation`**
