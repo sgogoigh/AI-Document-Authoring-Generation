@@ -172,13 +172,13 @@
 - [x] Commit Step 14 (`Commit #14`)
 
 ### Step 15: Monitoring, Audit Log Explorer & Reconstruction Analytics Page
-- [ ] Build `/monitoring` page:
+- [x] Build `/monitoring` page:
   - KPI Cards: Total LLM calls, total tokens, average/p95 latency, success rate, like/dislike ratio, total exports.
   - Filterable Audit Event Log table (filter by project, event type, severity, trace ID, date range, search text; expandable before/after JSON diff inspector).
   - LLM Call Metrics table (operation, model, tokens, latency, status).
   - Interactive Project State Reconstruction viewer (pick a project + version/timestamp -> view reconstructed state & diff).
-- [ ] Write & run component tests `src/__tests__/monitoring_page.test.tsx`.
-- [ ] Commit Step 15 (`Commit #15`) -> **Push to `origin feat/platform-implementation` (Push #3)**
+- [x] Write & run component tests `src/__tests__/monitoring_page.test.tsx`.
+- [x] Commit Step 15 (`Commit #15`) -> **Push to `origin feat/platform-implementation` (Push #3)**
 
 ---
 

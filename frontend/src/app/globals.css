@@ -11,21 +11,24 @@
   --brand-teal: #0d9488;
   --brand-teal-soft: #f0fdfa;
   --border-subtle: #e2e8f0;
+  --font-sans: "Plus Jakarta Sans", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-serif: "Newsreader", "Georgia", "Cambria", serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, monospace;
 }
 
 body {
   background-color: var(--bg-canvas);
   color: var(--ink-primary);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
 .font-editorial {
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-serif);
 }
 
 .font-mono-code {
-  font-family: var(--font-mono), ui-monospace, monospace;
+  font-family: var(--font-mono);
 }
 
 /* Smooth custom scrollbar */
