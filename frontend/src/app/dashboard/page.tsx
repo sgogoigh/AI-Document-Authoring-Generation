@@ -52,12 +52,14 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!authLoading && !user) {
       router.replace("/login");
-      return;
     }
+  }, [authLoading, user, router]);
+
+  useEffect(() => {
     if (user) {
       void loadProjects();
     }
-  }, [authLoading, user, router, loadProjects]);
+  }, [user, loadProjects]);
 
   const handleDelete = async (id: string) => {
     try {

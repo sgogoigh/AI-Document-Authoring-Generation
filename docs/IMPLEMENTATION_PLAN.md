@@ -159,7 +159,7 @@
 - [x] Commit Step 13 (`Commit #13`)
 
 ### Step 14: Interactive Refinement Studio, Revision History & Export UI
-- [ ] Build `/projects/[id]` (Split-pane Editorial Studio):
+- [x] Build `/projects/[id]` (Split-pane Editorial Studio):
   - **Left Sidebar:** Document outline / slide navigator with feedback badges (`like`/`dislike`), comment counts, revision counts, and quick jump.
   - **Main Editor Canvas:** Clean, rich structured rendering of each section/slide (callout summary, paragraphs, bullets, tables, embedded Gemini-generated image preview, speaker notes for `.pptx`).
   - **Per-Section/Slide Refinement Controls:**
@@ -168,8 +168,8 @@
     - Comment Box + persisted comment thread per section/slide.
   - **Version History & Point-in-Time Reconstruction Drawer:** View section revisions with field diffs, inspect project reconstruction at any version/timestamp, and restore prior versions.
   - **Top Action Bar:** Export `.docx` / `.pptx` button with instant download + Project Monitoring shortcut.
-- [ ] Write & run component tests `src/__tests__/refinement_studio.test.tsx`.
-- [ ] Commit Step 14 (`Commit #14`)
+- [x] Write & run component tests `src/__tests__/refinement_studio.test.tsx`.
+- [x] Commit Step 14 (`Commit #14`)
 
 ### Step 15: Monitoring, Audit Log Explorer & Reconstruction Analytics Page
 - [ ] Build `/monitoring` page:
