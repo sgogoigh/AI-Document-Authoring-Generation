@@ -45,18 +45,18 @@
 - [x] Commit Step 4 (`Commit #4`)
 
 ### Step 5: Audit Logging Middleware, Monitoring Service & Reconstruction Engine
-- [ ] Implement `backend/app/core/logging_middleware.py` assigning `X-Trace-Id` to every request and recording HTTP timings/errors.
-- [ ] Implement `backend/app/services/audit_service.py`:
+- [x] Implement `backend/app/core/logging_middleware.py` assigning `X-Trace-Id` to every request and recording HTTP timings/errors.
+- [x] Implement `backend/app/services/audit_service.py`:
   - `record_event(...)` writing immutable `audit_event_logs` with `before_state_json`, `after_state_json`, `trace_id`
   - `record_llm_metric(...)` writing token counts, latency, model, status
   - `query_logs(...)` supporting multi-facet filtering (`project_id`, `user_id`, `event_type`, `severity`, `trace_id`, `date_from`, `date_to`, `search`)
   - `compute_analytics(...)` returning aggregated LLM usage, latency percentiles, error rate, like/dislike ratios, and project activity timelines
-- [ ] Implement `backend/app/services/reconstruction_service.py`:
+- [x] Implement `backend/app/services/reconstruction_service.py`:
   - `capture_snapshot(project_id, trigger_event)`
   - `reconstruct_project(project_id, version | at_timestamp | event_seq_id)` returning exact outline, section content, comments, feedback, and diff vs. current state
   - `restore_project_to_version(project_id, version, user_id)` creating forward `restore` revisions without deleting history
-- [ ] Write & run comprehensive unit tests `tests/unit/test_audit_and_reconstruction.py`.
-- [ ] Commit Step 5 (`Commit #5`) -> **Push to `origin feat/platform-implementation` (Push #1)**
+- [x] Write & run comprehensive unit tests `tests/unit/test_audit_and_reconstruction.py`.
+- [x] Commit Step 5 (`Commit #5`) -> **Push to `origin feat/platform-implementation` (Push #1)**
 
 ---
 

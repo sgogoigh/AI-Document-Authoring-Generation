@@ -7,6 +7,7 @@ import app.models  # noqa: F401
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.core.database import Base, engine
+from app.core.logging_middleware import TraceAndTimingMiddleware
 
 
 @asynccontextmanager
@@ -29,6 +30,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    app.add_middleware(TraceAndTimingMiddleware)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,
