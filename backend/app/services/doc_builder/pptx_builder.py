@@ -168,7 +168,7 @@ def _add_header_chrome(
         ps = tf.add_paragraph()
         _add_run(
             ps,
-            _clamp(subtitle, 120),
+            _clamp(subtitle, 150),
             font_name=theme.font_family,
             size_pt=13,
             color=_rgb(theme.muted_text_hex),
@@ -269,6 +269,9 @@ def _write_bullets_into_box(
         p = tf.paragraphs[0] if idx == 0 else tf.add_paragraph()
         p.space_after = Pt(12)
         p.line_spacing = 1.18
+        p_pr = p._pPr
+        p_pr.set("marL", "228600")
+        p_pr.set("indent", "-228600")
         _add_run(
             p,
             "▸  ",
@@ -366,15 +369,17 @@ def build_pptx_bytes(
                 slide, Inches(7.6), Inches(1.8), Inches(5.1), Inches(4.9), "FFFFFF", theme.border_hex
             )
             _add_fitted_picture(
-                slide, image_path, Inches(7.8), Inches(1.98), Inches(4.7), Inches(4.05)
+                slide, image_path, Inches(7.8), Inches(1.94), Inches(4.7), Inches(4.0)
             )
             cap_text = sec.get("image_caption") or content.get("image_caption") or sec["title"]
-            cap_tb = slide.shapes.add_textbox(Inches(7.75), Inches(6.15), Inches(4.8), Inches(0.45))
-            cap_p = cap_tb.text_frame.paragraphs[0]
+            cap_tb = slide.shapes.add_textbox(Inches(7.72), Inches(6.04), Inches(4.86), Inches(0.56))
+            cap_tf = cap_tb.text_frame
+            cap_tf.word_wrap = True
+            cap_p = cap_tf.paragraphs[0]
             cap_p.alignment = PP_ALIGN.CENTER
             _add_run(
                 cap_p,
-                _clamp(cap_text, 70),
+                _clamp(cap_text, 95),
                 font_name=theme.font_family,
                 size_pt=10,
                 italic=True,

@@ -46,6 +46,20 @@ def _set_callout_borders(cell, accent_hex: str) -> None:
     tc_pr.append(borders)
 
 
+def _prevent_row_split(row) -> None:
+    tr_pr = row._tr.get_or_add_trPr()
+    tr_pr.append(OxmlElement("w:cantSplit"))
+
+
+def _mark_header_row(row) -> None:
+    tr_pr = row._tr.get_or_add_trPr()
+    tr_pr.append(OxmlElement("w:tblHeader"))
+    tr_pr.append(OxmlElement("w:cantSplit"))
+    for cell in row.cells:
+        for p in cell.paragraphs:
+            p.paragraph_format.keep_with_next = True
+
+
 def _set_table_borders(table, border_hex: str) -> None:
     tbl_pr = table._tbl.tblPr
     borders = parse_xml(
@@ -265,6 +279,7 @@ def build_docx_bytes(
         if summary := content.get("summary_callout"):
             callout_tbl = doc.add_table(rows=1, cols=1)
             callout_tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
+            _prevent_row_split(callout_tbl.rows[0])
             c_cell = callout_tbl.cell(0, 0)
             c_cell.width = Inches(6.7)
             _set_cell_shading(c_cell, theme.soft_tint_hex)
@@ -336,8 +351,10 @@ def build_docx_bytes(
                 rh.bold = True
                 rh.font.size = Pt(9.5)
                 rh.font.color.rgb = RGBColor(255, 255, 255)
+            _mark_header_row(tbl.rows[0])
 
             for r_i, row_vals in enumerate(rows):
+                _prevent_row_split(tbl.rows[r_i + 1])
                 for col_i in range(len(headers)):
                     cell = tbl.cell(r_i + 1, col_i)
                     cell.width = col_width
@@ -358,6 +375,7 @@ def build_docx_bytes(
             p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
             p_img.paragraph_format.space_before = Pt(8)
             p_img.paragraph_format.space_after = Pt(3)
+            p_img.paragraph_format.keep_with_next = True
             p_img.add_run().add_picture(str(image_path), width=Inches(5.4))
 
             caption = sec.get("image_caption") or content.get("image_caption") or sec["title"]

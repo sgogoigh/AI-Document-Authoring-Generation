@@ -199,13 +199,13 @@
 - [x] Commit Step 17 (`Commit #17`)
 
 ### Step 18: Extensive Live End-to-End Runs & Visual Document Quality Inspection
-- [ ] Execute live end-to-end runs using the real `GEMINI_API_KEY` for:
+- [x] Execute live end-to-end runs using the real `GEMINI_API_KEY` for:
   - Full `.docx` business report (with AI-Suggest Outline, Gemini-generated images, iterative refinements, feedback, comments, export).
   - Full `.pptx` executive deck (with slide titles, Gemini-generated slide visuals, iterative refinements, speaker notes, export).
-- [ ] Run programmatic structural checks (`tests/doc_quality/`) validating XML integrity, refined content accuracy, embedded images, and zero `.pptx` bounding-box overlap.
-- [ ] Render exported `.docx` and `.pptx` pages/slides to PNG images (via LibreOffice headless / Docker container + `pdftoppm` or `pymupdf`) and **perform visual quality inspection** on the rendered pages, fixing any spacing, contrast, overflow, or layout issues discovered.
-- [ ] Save visual inspection summary & metrics report in `docs/E2E_AND_VISUAL_QA_REPORT.md`.
-- [ ] Commit Step 18 (`Commit #18`)
+- [x] Run programmatic structural checks (`tests/doc_quality/`) validating XML integrity, refined content accuracy, embedded images, and zero `.pptx` bounding-box overlap.
+- [x] Render exported `.docx` and `.pptx` pages/slides to PDF/PNG images (via Microsoft Word & PowerPoint COM) and **perform visual quality inspection** on the rendered pages, fixing table header repetition, callout page-split prevention, hanging indents, and caption sizing.
+- [x] Save visual inspection summary & metrics report in `docs/E2E_AND_VISUAL_QA_REPORT.md`.
+- [x] Commit Step 18 (`Commit #18`)
 
 ### Step 19: Comprehensive `README.md` & Final Verification Pass
 - [ ] Write comprehensive root `README.md` covering:
