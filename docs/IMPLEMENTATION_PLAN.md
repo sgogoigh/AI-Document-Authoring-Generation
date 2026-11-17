@@ -264,11 +264,11 @@
 - [x] Commit Step 22 (`Commit #22`).
 
 ### Step 23: Cloud Deployment Plan (Vercel Frontend + Cloud Backend + Managed Postgres)
-- [ ] Author `docs/CLOUD_DEPLOYMENT_PLAN.md` detailing:
+- [x] Author `docs/CLOUD_DEPLOYMENT_PLAN.md` detailing:
   - Vercel frontend deployment (`frontend/` root directory, build/env configuration, preview/prod domains, Google OAuth origins & callbacks).
   - Cloud backend hosting options for FastAPI (Render, Railway, Fly.io, Google Cloud Run) with managed PostgreSQL (Neon / Supabase / Render Postgres), Alembic startup migrations, CORS for Vercel preview/prod URLs, and asset storage considerations.
   - End-to-end production cutover checklist and post-deploy smoke verification steps.
-- [ ] Commit Step 23 (`Commit #23`).
+- [x] Commit Step 23 (`Commit #23`).
 
 ### Step 24: Update Central `README.md` & Final Verification Pass
 - [ ] Update root `README.md` with links to `docs/SCENARIOS_AND_PERFORMANCE_REPORT.md`, `docs/CLOUD_DEPLOYMENT_PLAN.md`, and instructions to run `tests/scenarios/`.
